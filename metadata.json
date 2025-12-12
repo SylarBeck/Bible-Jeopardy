@@ -1,0 +1,5 @@
+{
+  "name": "Bible Jeopardy",
+  "description": "A Jeopardy-style trivia game featuring Bible-based questions inspired by JW.org content, powered by Gemini.",
+  "requestFramePermissions": []
+}

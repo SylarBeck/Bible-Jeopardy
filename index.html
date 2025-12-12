@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Bible Jeopardy</title>
+    
+    <!-- PWA Settings -->
+    <meta name="theme-color" content="#120a1f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Jeopardy" />
+    <link rel="manifest" href="manifest.json" />
+    
+    <!-- Favicon / Icon (Base64 SVG for standalone usage) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235e35b1' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffcc00' text-anchor='middle' font-weight='bold'>J</text></svg>" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235e35b1' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffcc00' text-anchor='middle' font-weight='bold'>J</text></svg>" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Roboto+Condensed:wght@400;700&family=Share+Tech+Mono&display=swap');
+      
+      :root {
+        /* Base Themes for Backgrounds */
+        --bg-main: #f7f7f7;
+        --text-main: #333333;
+        --modal-bg: rgba(0,0,0,0.6);
+      }
+
+      body.dark-mode {
+        --bg-main: #120a1f;
+        --text-main: #e0e0e0;
+        --modal-bg: rgba(0,0,0,0.85);
+      }
+
+      body {
+        background-color: var(--bg-main);
+        font-family: 'Noto Sans', sans-serif;
+        color: var(--text-main);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        overflow-x: hidden;
+        overscroll-behavior: none; /* Prevent pull-to-refresh on mobile */
+      }
+      
+      /* Safe area padding for iPhones with notches */
+      body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+      }
+      
+      .header-font {
+        font-family: 'Roboto Condensed', sans-serif;
+      }
+      
+      .lcd-font {
+        font-family: 'Share Tech Mono', monospace;
+      }
+
+      /* GLOBAL JEOPARDY TILE EFFECT */
+      .jeopardy-texture {
+        background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 40%),
+                    linear-gradient(145deg, #5e35b1 0%, #311b92 100%);
+        border: 2px solid #7e57c2;
+        box-shadow: 
+          inset 2px 2px 4px rgba(255,255,255,0.2), 
+          inset -2px -2px 8px rgba(0,0,0,0.5), 
+          0 4px 8px rgba(0,0,0,0.2);
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      }
+
+      .jeopardy-texture.interactive {
+        transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        cursor: pointer;
+      }
+
+      .jeopardy-texture.interactive:hover {
+        background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.25) 0%, transparent 40%),
+                    linear-gradient(145deg, #673ab7 0%, #4527a0 100%);
+        box-shadow: 
+          inset 2px 2px 4px rgba(255,255,255,0.3), 
+          inset -2px -2px 8px rgba(0,0,0,0.5), 
+          0 0 15px rgba(126, 87, 194, 0.6);
+        transform: translateY(-2px) scale(1.02);
+        border-color: #b39ddb;
+        z-index: 10;
+      }
+
+      /* Difficulty Glows */
+      .glow-200 { box-shadow: 0 0 15px rgba(0, 188, 212, 0.6); border-color: #00bcd4; }
+      .glow-400 { box-shadow: 0 0 15px rgba(76, 175, 80, 0.6); border-color: #4caf50; }
+      .glow-600 { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); border-color: #ffd700; }
+      .glow-800 { box-shadow: 0 0 20px rgba(255, 152, 0, 0.7); border-color: #ff9800; }
+      .glow-1000 { box-shadow: 0 0 25px rgba(244, 67, 54, 0.8); border-color: #f44336; }
+
+      /* Gold Text Utility */
+      .text-gold {
+        color: #FFD700;
+        text-shadow: 1px 1px 0px rgba(0,0,0,0.8);
+      }
+
+      /* 3D Retro Gold Score */
+      .text-3d-gold {
+        color: #ffd700;
+        text-shadow: 
+          1px 1px 0 #c6a300,
+          2px 2px 0 #a28500,
+          3px 3px 0 #7e6700,
+          4px 4px 0 #5a4900,
+          5px 5px 0 #362c00,
+          6px 8px 15px rgba(0, 0, 0, 0.6);
+      }
+      
+      /* Animations */
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+      .animate-shake {
+        animation: shake 0.3s ease-in-out;
+      }
+
+      @keyframes pop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+      .animate-pop {
+        animation: pop 0.2s ease-out;
+      }
+      
+      @keyframes reveal-bounce {
+        0% { transform: translateY(60px) scale(0.95); opacity: 0; }
+        60% { transform: translateY(-10px) scale(1.02); opacity: 1; }
+        80% { transform: translateY(5px) scale(0.99); }
+        100% { transform: translateY(0) scale(1); opacity: 1; }
+      }
+      .animate-reveal {
+        animation: reveal-bounce 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      @keyframes buzz-flash {
+        0% { filter: brightness(1); }
+        50% { filter: brightness(1.5); }
+        100% { filter: brightness(1); }
+      }
+      .animate-buzz-flash {
+        animation: buzz-flash 0.2s ease-out;
+      }
+
+      @keyframes slide-up-fade {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .animate-slide-up {
+        animation: slide-up-fade 0.6s ease-out forwards;
+      }
+      
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "peerjs": "https://esm.sh/peerjs@1.5.4?bundle",
+    "qrcode": "https://esm.sh/qrcode@1.5.3",
+    "react": "https://esm.sh/react@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+    "three": "https://esm.sh/three@0.160.0",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.15.16?external=react,react-dom,three",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@9.105.1?external=react,react-dom,three,@react-three/fiber"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
