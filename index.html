@@ -6,7 +6,7 @@
     <title>Bible Jeopardy</title>
     
     <!-- PWA Settings -->
-    <meta name="theme-color" content="#120a1f" />
+    <meta name="theme-color" content="#4A6DA7" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -14,8 +14,8 @@
     <link rel="manifest" href="manifest.json" />
     
     <!-- Favicon / Icon (Base64 SVG for standalone usage) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235e35b1' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffcc00' text-anchor='middle' font-weight='bold'>J</text></svg>" />
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235e35b1' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffcc00' text-anchor='middle' font-weight='bold'>J</text></svg>" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234A6DA7' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffffff' text-anchor='middle' font-weight='bold'>J</text></svg>" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234A6DA7' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffffff' text-anchor='middle' font-weight='bold'>J</text></svg>" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -29,7 +29,7 @@
       }
 
       body.dark-mode {
-        --bg-main: #120a1f;
+        --bg-main: #0f172a; /* Slate 900 */
         --text-main: #e0e0e0;
         --modal-bg: rgba(0,0,0,0.85);
       }
@@ -56,11 +56,11 @@
         font-family: 'Share Tech Mono', monospace;
       }
 
-      /* GLOBAL JEOPARDY TILE EFFECT */
+      /* GLOBAL JEOPARDY TILE EFFECT - JW Blue Theme */
       .jeopardy-texture {
         background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 40%),
-                    linear-gradient(145deg, #5e35b1 0%, #311b92 100%);
-        border: 2px solid #7e57c2;
+                    linear-gradient(145deg, #4A6DA7 0%, #1e3a8a 100%);
+        border: 2px solid #60a5fa;
         box-shadow: 
           inset 2px 2px 4px rgba(255,255,255,0.2), 
           inset -2px -2px 8px rgba(0,0,0,0.5), 
@@ -76,22 +76,22 @@
 
       .jeopardy-texture.interactive:hover {
         background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.25) 0%, transparent 40%),
-                    linear-gradient(145deg, #673ab7 0%, #4527a0 100%);
+                    linear-gradient(145deg, #5b8bd6 0%, #2563eb 100%);
         box-shadow: 
           inset 2px 2px 4px rgba(255,255,255,0.3), 
           inset -2px -2px 8px rgba(0,0,0,0.5), 
-          0 0 15px rgba(126, 87, 194, 0.6);
+          0 0 15px rgba(96, 165, 250, 0.6);
         transform: translateY(-2px) scale(1.02);
-        border-color: #b39ddb;
+        border-color: #93c5fd;
         z-index: 10;
       }
 
       /* Difficulty Glows */
-      .glow-200 { box-shadow: 0 0 15px rgba(0, 188, 212, 0.6); border-color: #00bcd4; }
-      .glow-400 { box-shadow: 0 0 15px rgba(76, 175, 80, 0.6); border-color: #4caf50; }
-      .glow-600 { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); border-color: #ffd700; }
-      .glow-800 { box-shadow: 0 0 20px rgba(255, 152, 0, 0.7); border-color: #ff9800; }
-      .glow-1000 { box-shadow: 0 0 25px rgba(244, 67, 54, 0.8); border-color: #f44336; }
+      .glow-200 { box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); border-color: #38bdf8; }
+      .glow-400 { box-shadow: 0 0 15px rgba(74, 222, 128, 0.6); border-color: #4ade80; }
+      .glow-600 { box-shadow: 0 0 20px rgba(250, 204, 21, 0.6); border-color: #facc15; }
+      .glow-800 { box-shadow: 0 0 20px rgba(251, 146, 60, 0.7); border-color: #fb923c; }
+      .glow-1000 { box-shadow: 0 0 25px rgba(248, 113, 113, 0.8); border-color: #f87171; }
 
       /* Gold Text Utility */
       .text-gold {
@@ -168,17 +168,17 @@
   <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "vite": "https://esm.sh/vite@^7.2.7",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "qrcode": "https://esm.sh/qrcode@^1.5.4",
+    "peerjs": "https://esm.sh/peerjs@^1.5.5",
     "@react-three/fiber": "https://esm.sh/@react-three/fiber@^9.4.2",
     "@react-three/drei": "https://esm.sh/@react-three/drei@^10.7.7",
-    "peerjs": "https://esm.sh/peerjs@^1.5.5",
-    "qrcode": "https://esm.sh/qrcode@^1.5.4",
-    "three": "https://esm.sh/three@^0.182.0"
+    "three": "https://esm.sh/three@^0.182.0",
+    "vite": "https://esm.sh/vite@^7.2.7",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>

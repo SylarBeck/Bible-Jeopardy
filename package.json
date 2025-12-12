@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@google/genai": "^0.1.2",
+    "@google/genai": "^0.1.1",
     "@react-three/drei": "^9.105.1",
     "@react-three/fiber": "^8.15.16",
     "peerjs": "^1.5.2",

@@ -42,7 +42,7 @@ const LibraryIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" he
 const HelpIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>);
 
 const TOPICS: {id: Topic, label: string, icon: React.ReactNode}[] = [
-  { id: 'GENERAL', label: 'General Mix', icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> },
+  { id: 'GENERAL', label: 'General Mix', icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10z"/></svg> },
   { id: 'JESUS', label: 'Life of Jesus', icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> },
   { id: 'PROPHECY', label: 'Prophecy', icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> },
   { id: 'HISTORY', label: 'Bible History', icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M17 21v-8.5a1.5 1.5 0 0 0-1.5-1.5h-7a1.5 1.5 0 0 0-1.5 1.5V21"/></svg> },
@@ -54,9 +54,9 @@ const DEFAULT_AVATAR: Avatar = { id: 'default', name: 'Default', color: 'bg-gray
 
 const TutorialModal = ({ onClose }: { onClose: () => void }) => (
   <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" onClick={onClose}>
-    <div className="bg-[#2a1a4a] border-2 border-[#ffcc00] rounded-xl max-w-2xl w-full p-8 shadow-2xl relative" onClick={e => e.stopPropagation()}>
+    <div className="bg-[#1e293b] border-2 border-[#4A6DA7] rounded-xl max-w-2xl w-full p-8 shadow-2xl relative" onClick={e => e.stopPropagation()}>
       <button onClick={onClose} className="absolute top-4 right-4 text-white/50 hover:text-white text-xl font-bold">✕</button>
-      <h2 className="text-3xl font-bold text-[#ffcc00] mb-6 header-font tracking-wide">HOW TO PLAY</h2>
+      <h2 className="text-3xl font-bold text-[#4A6DA7] mb-6 header-font tracking-wide">HOW TO PLAY</h2>
       
       <div className="space-y-6 text-white/90">
         <div className="flex gap-4">
@@ -84,7 +84,7 @@ const TutorialModal = ({ onClose }: { onClose: () => void }) => (
         </div>
 
         <div className="bg-white/5 p-4 rounded border border-white/10 mt-4">
-           <h4 className="font-bold text-xs uppercase text-[#ffcc00] mb-2">Keyboard Shortcuts (Host)</h4>
+           <h4 className="font-bold text-xs uppercase text-[#4A6DA7] mb-2">Keyboard Shortcuts (Host)</h4>
            <div className="grid grid-cols-2 gap-2 text-xs font-mono opacity-80">
               <div><span className="bg-white/10 px-1 rounded">SPACE</span> : Reveal Answer</div>
               <div><span className="bg-white/10 px-1 rounded">ESC</span> : Close Question</div>
@@ -94,14 +94,14 @@ const TutorialModal = ({ onClose }: { onClose: () => void }) => (
         </div>
       </div>
       
-      <button onClick={onClose} className="w-full mt-8 bg-[#ffcc00] text-black font-bold py-3 rounded uppercase tracking-widest hover:bg-yellow-400 shadow-lg">Got it</button>
+      <button onClick={onClose} className="w-full mt-8 bg-[#4A6DA7] text-white font-bold py-3 rounded uppercase tracking-widest hover:bg-blue-600 shadow-lg">Got it</button>
     </div>
   </div>
 );
 
 const MobileWarningModal = ({ onCancel, onContinue }: { onCancel: () => void, onContinue: () => void }) => (
   <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-md p-6 animate-fade-in">
-    <div className="bg-[#1a1a2e] border-2 border-red-500 rounded-xl max-w-md w-full p-6 shadow-[0_0_50px_rgba(220,38,38,0.3)] text-center relative">
+    <div className="bg-[#0f172a] border-2 border-red-500 rounded-xl max-w-md w-full p-6 shadow-[0_0_50px_rgba(220,38,38,0.3)] text-center relative">
       <div className="w-16 h-16 rounded-full bg-red-900/50 flex items-center justify-center mx-auto mb-4 border border-red-500 text-3xl">
         ⚠️
       </div>
@@ -173,15 +173,17 @@ function App() {
   // Generate QR Code for Host
   useEffect(() => {
     if (appMode === 'HOST' && !qrUrl) {
-      const url = new URL(window.location.href);
+      // Use clean origin + pathname to avoid appending to existing params
+      const url = new URL(window.location.origin + window.location.pathname);
       url.searchParams.set('mode', 'controller');
-      // Themed QR Code: Dark modules on Light Gold background
+      
+      // Theme matching JW.org palette: Blue (#4A6DA7) and White (#FFFFFF)
       QRCode.toDataURL(url.toString(), { 
-        margin: 1, 
+        margin: 2, 
         scale: 8,
         color: {
-          dark: '#120a1f', // Main App Background Color (Deep Purple/Black)
-          light: '#ffcc00' // Main Accent Color (Gold)
+          dark: '#4A6DA7', 
+          light: '#FFFFFF' 
         }
       })
       .then((url) => setQrUrl(url))
@@ -497,8 +499,8 @@ function App() {
 
   if (appMode === 'MENU') {
     return (
-      <div className="h-[100dvh] w-screen flex flex-col items-center justify-center bg-[#120a1f] text-white overflow-hidden relative">
-         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(94,53,177,0.3)_0%,_#090510_80%)] pointer-events-none"></div>
+      <div className="h-[100dvh] w-screen flex flex-col items-center justify-center bg-[#0f172a] text-white overflow-hidden relative">
+         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(74,109,167,0.3)_0%,_#020617_80%)] pointer-events-none"></div>
          
          {/* Modals */}
          {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
@@ -512,7 +514,7 @@ function App() {
          <div className="relative z-10 w-full max-w-5xl px-6 flex flex-col h-full py-8 md:py-12 overflow-y-auto no-scrollbar">
             <div className="text-center mb-8 md:mb-12 shrink-0">
                <h1 className="text-4xl md:text-7xl font-bold header-font text-white drop-shadow-2xl mb-4 tracking-tighter">BIBLE JEOPARDY</h1>
-               <div className="h-1 w-32 bg-[#ffcc00] mx-auto rounded-full mb-4 md:mb-6"></div>
+               <div className="h-1 w-32 bg-[#4A6DA7] mx-auto rounded-full mb-4 md:mb-6"></div>
                <p className="text-lg md:text-xl text-white/60">The interactive spiritual trivia experience.</p>
             </div>
 
@@ -520,7 +522,7 @@ function App() {
                 {/* TV MODE CARD */}
                 <div 
                   onClick={checkTvCompat}
-                  className="group relative cursor-pointer rounded-2xl overflow-hidden border-2 border-white/10 hover:border-[#ffcc00] transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,204,0,0.2)] bg-[#2a1a4a]/50 backdrop-blur-sm flex flex-col min-h-[220px] md:min-h-[300px]"
+                  className="group relative cursor-pointer rounded-2xl overflow-hidden border-2 border-white/10 hover:border-[#4A6DA7] transition-all duration-300 hover:shadow-[0_0_40px_rgba(74,109,167,0.2)] bg-[#1e293b]/50 backdrop-blur-sm flex flex-col min-h-[220px] md:min-h-[300px]"
                 >
                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0"></div>
                    <div className="absolute top-0 right-0 p-6 md:p-8 text-white/5 opacity-50 group-hover:scale-110 transition-transform duration-500">
@@ -528,12 +530,12 @@ function App() {
                    </div>
                    
                    <div className="relative z-10 p-6 md:p-8 flex flex-col h-full justify-end">
-                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#ffcc00] text-black flex items-center justify-center mb-4 md:mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#4A6DA7] text-white flex items-center justify-center mb-4 md:mb-6 shadow-lg group-hover:scale-110 transition-transform">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                       </div>
                       <h2 className="text-2xl md:text-3xl font-bold header-font mb-2">HOST GAME</h2>
                       <p className="text-white/70 mb-4 md:mb-6 text-sm md:text-base">Use this device as the main TV display. Manage the game, questions, and scores.</p>
-                      <div className="flex items-center text-[#ffcc00] font-bold uppercase tracking-widest text-xs md:text-sm group-hover:gap-2 transition-all">
+                      <div className="flex items-center text-[#4A6DA7] font-bold uppercase tracking-widest text-xs md:text-sm group-hover:gap-2 transition-all">
                          Launch TV Mode <span>&rarr;</span>
                       </div>
                    </div>
@@ -542,7 +544,7 @@ function App() {
                 {/* CONTROLLER MODE CARD */}
                 <div 
                   onClick={() => setAppMode('CONTROLLER')}
-                  className="group relative cursor-pointer rounded-2xl overflow-hidden border-2 border-white/10 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] bg-[#1a237e]/30 backdrop-blur-sm flex flex-col min-h-[220px] md:min-h-[300px]"
+                  className="group relative cursor-pointer rounded-2xl overflow-hidden border-2 border-white/10 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] bg-[#1e293b]/50 backdrop-blur-sm flex flex-col min-h-[220px] md:min-h-[300px]"
                 >
                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0"></div>
                    <div className="absolute top-0 right-0 p-6 md:p-8 text-white/5 opacity-50 group-hover:scale-110 transition-transform duration-500">
@@ -575,13 +577,13 @@ function App() {
 
   // HOST APP
   return (
-    <div className="h-screen w-screen font-sans flex flex-col overflow-hidden bg-[#120a1f] text-white transition-colors duration-300 relative">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,_rgba(94,53,177,0.15)_0%,_transparent_60%)] pointer-events-none"></div>
+    <div className="h-screen w-screen font-sans flex flex-col overflow-hidden bg-[#0f172a] text-white transition-colors duration-300 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,_rgba(74,109,167,0.15)_0%,_transparent_60%)] pointer-events-none"></div>
 
       {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
 
       {/* Header - Now Sticky & Centered */}
-      <header className="jeopardy-texture shadow-lg flex-none z-50 transition-colors duration-300 sticky top-0 bg-[#120a1f]/95 backdrop-blur-md border-b-2 border-[#7e57c2]">
+      <header className="jeopardy-texture shadow-lg flex-none z-50 transition-colors duration-300 sticky top-0 bg-[#0f172a]/95 backdrop-blur-md border-b-2 border-[#4A6DA7]">
         <div className="max-w-[1920px] mx-auto px-6 h-24 flex justify-between items-center relative">
           
           {/* Logo / Title (Left) */}
@@ -604,10 +606,10 @@ function App() {
                     key={team.id} 
                     className={`
                       relative flex flex-col items-center justify-center pointer-events-auto
-                      bg-[#2a1a4a]/90 backdrop-blur-md rounded-lg
+                      bg-[#1e293b]/90 backdrop-blur-md rounded-lg
                       transition-all duration-500 ease-out
                       ${isLeader 
-                        ? 'border-2 border-[#ffcc00] shadow-[0_0_20px_rgba(255,204,0,0.5)] transform scale-110 z-10 py-2 px-6 min-w-[110px]' 
+                        ? 'border-2 border-[#4A6DA7] shadow-[0_0_20px_rgba(74,109,167,0.5)] transform scale-110 z-10 py-2 px-6 min-w-[110px]' 
                         : 'border border-white/10 opacity-90 scale-95 py-1 px-4 min-w-[90px] grayscale-[0.3]'}
                     `}
                   >
@@ -621,7 +623,7 @@ function App() {
                       <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-inner ${team.avatar.color}`}>
                         {team.avatar.icon}
                       </div>
-                      <div className={`text-[9px] font-bold uppercase tracking-widest ${isLeader ? 'text-[#ffcc00]' : 'text-white/60'}`}>
+                      <div className={`text-[9px] font-bold uppercase tracking-widest ${isLeader ? 'text-[#4A6DA7]' : 'text-white/60'}`}>
                         {team.name}
                       </div>
                     </div>
@@ -665,7 +667,7 @@ function App() {
         
         {/* START SCREEN */}
         {gameState === GameState.START && (
-          <div className="w-full max-w-4xl p-12 rounded-xl shadow-2xl animate-fade-in flex flex-col items-center justify-center text-center gap-8 jeopardy-texture border-t-4 border-[#ffcc00]">
+          <div className="w-full max-w-4xl p-12 rounded-xl shadow-2xl animate-fade-in flex flex-col items-center justify-center text-center gap-8 jeopardy-texture border-t-4 border-[#4A6DA7]">
              <h2 className="text-6xl font-bold header-font text-white text-shadow-lg tracking-wide">HOST GAME</h2>
              <p className="text-xl opacity-80 max-w-lg text-white">
                Create a room on this screen. Players join using their phones as buzzers.
@@ -674,13 +676,13 @@ function App() {
              <div className="flex gap-6 mt-4">
                 <button
                   onClick={initHost}
-                  className="bg-[#ffcc00] hover:bg-yellow-400 text-black font-bold py-4 px-12 rounded-lg text-xl shadow-lg transition-transform hover:scale-105 uppercase tracking-wider"
+                  className="bg-[#4A6DA7] hover:bg-blue-600 text-white font-bold py-4 px-12 rounded-lg text-xl shadow-lg transition-transform hover:scale-105 uppercase tracking-wider"
                 >
                   Create Room
                 </button>
                 <button
                   onClick={() => { setAppMode('HOST'); setGameState(GameState.LOBBY); }}
-                  className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-transform hover:scale-105"
+                  className="bg-[#333] hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-transform hover:scale-105 border border-white/20"
                 >
                   Manual Play
                 </button>
@@ -701,13 +703,13 @@ function App() {
                 {roomCode ? (
                    <div className="flex gap-6 items-center">
                      {qrUrl && (
-                        <div className="p-2 rounded-lg shadow-lg hidden md:block animate-pop border-2 border-[#ffcc00] bg-[#120a1f]">
+                        <div className="p-2 rounded-lg shadow-lg hidden md:block animate-pop border-2 border-[#4A6DA7] bg-[#0f172a]">
                            <img src={qrUrl} alt="Join Game QR" className="w-24 h-24" />
                         </div>
                      )}
                      <div className="text-right bg-black/30 p-3 rounded-lg border border-white/10 shadow-inner">
                        <div className="text-xs font-bold uppercase tracking-wider opacity-70">Room Code</div>
-                       <div className="text-5xl font-bold header-font text-[#ffcc00] tracking-widest text-shadow-sm lcd-font">{roomCode}</div>
+                       <div className="text-5xl font-bold header-font text-[#4A6DA7] tracking-widest text-shadow-sm lcd-font">{roomCode}</div>
                      </div>
                    </div>
                 ) : null}
@@ -741,7 +743,7 @@ function App() {
                      <input 
                        value={newTeamName} 
                        onChange={e => setNewTeamName(e.target.value)}
-                       className="flex-grow p-3 rounded border border-white/20 bg-black/30 text-white placeholder-white/30 focus:border-[#ffcc00] outline-none text-sm"
+                       className="flex-grow p-3 rounded border border-white/20 bg-black/30 text-white placeholder-white/30 focus:border-[#4A6DA7] outline-none text-sm"
                        placeholder="Team Name"
                      />
                      <button onClick={addTeam} className="bg-green-700 hover:bg-green-600 text-white px-4 rounded font-bold shadow-md">+</button>
@@ -763,7 +765,7 @@ function App() {
                          </button>
                          <button 
                            onClick={() => setGameMode('PRESET')} 
-                           className={`px-4 py-1 rounded-md text-xs font-bold uppercase transition-all flex items-center gap-2 ${gameMode === 'PRESET' ? 'bg-[#ffcc00] text-black shadow-md' : 'text-white/40 hover:text-white'}`}
+                           className={`px-4 py-1 rounded-md text-xs font-bold uppercase transition-all flex items-center gap-2 ${gameMode === 'PRESET' ? 'bg-[#4A6DA7] text-white shadow-md' : 'text-white/40 hover:text-white'}`}
                          >
                            <LibraryIcon /> Library
                          </button>
@@ -805,16 +807,16 @@ function App() {
                          </button>
                       </div>
                    ) : (
-                      <div className="flex items-center justify-between h-full animate-fade-in bg-black/20 p-4 rounded border border-[#ffcc00]/20">
+                      <div className="flex items-center justify-between h-full animate-fade-in bg-black/20 p-4 rounded border border-[#4A6DA7]/20">
                          <div>
-                            <h4 className="font-bold text-[#ffcc00] text-lg mb-1">Select a Premade Game</h4>
+                            <h4 className="font-bold text-[#4A6DA7] text-lg mb-1">Select a Premade Game</h4>
                             <p className="text-sm text-white/60">Choose from curated packs or your own creations.</p>
                             <span className="text-xs text-green-400 font-bold uppercase tracking-wider mt-1 block">Offline Ready</span>
                          </div>
                          <button 
                             onClick={startGame}
                             disabled={teams.length < 1}
-                            className="px-8 py-4 bg-[#ffcc00] hover:bg-yellow-400 disabled:opacity-50 text-black font-bold rounded-lg shadow-lg text-lg uppercase flex items-center gap-2"
+                            className="px-8 py-4 bg-[#4A6DA7] hover:bg-blue-600 disabled:opacity-50 text-white font-bold rounded-lg shadow-lg text-lg uppercase flex items-center gap-2"
                          >
                            <LibraryIcon /> Open Library
                          </button>
@@ -844,7 +846,7 @@ function App() {
                    <div 
                      key={preset.id}
                      onClick={() => loadPreset(preset.id)}
-                     className="p-8 rounded-xl bg-black/30 border-2 border-[#5e35b1] hover:border-[#ffcc00] hover:bg-black/50 cursor-pointer transition-all transform hover:scale-[1.02] shadow-lg group relative overflow-hidden"
+                     className="p-8 rounded-xl bg-black/30 border-2 border-[#4A6DA7] hover:border-white hover:bg-black/50 cursor-pointer transition-all transform hover:scale-[1.02] shadow-lg group relative overflow-hidden"
                    >
                      {preset.isCustom && (
                         <button 
@@ -857,7 +859,7 @@ function App() {
                      )}
                      <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 text-6xl transition-opacity">{preset.icon}</div>
                      <div className="relative z-10">
-                       <h3 className="text-2xl font-bold header-font text-[#ffcc00] mb-3">{preset.title}</h3>
+                       <h3 className="text-2xl font-bold header-font text-[#4A6DA7] mb-3">{preset.title}</h3>
                        <p className="text-white/80 leading-relaxed line-clamp-2 min-h-[3rem]">{preset.description}</p>
                        
                        <div className="mt-4 flex gap-2">
@@ -890,7 +892,7 @@ function App() {
         {/* LOADING / TRANSITION */}
         {(gameState === GameState.LOADING || gameState === GameState.ROUND_TRANSITION) && (
           <div className="text-center p-12 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md shadow-2xl animate-fade-in">
-            <div className="w-20 h-20 border-8 border-transparent border-t-[#ffcc00] rounded-full animate-spin mx-auto mb-8 bg-white/5"></div>
+            <div className="w-20 h-20 border-8 border-transparent border-t-[#4A6DA7] rounded-full animate-spin mx-auto mb-8 bg-white/5"></div>
             <p className="text-3xl font-bold animate-pulse header-font text-white text-shadow-md">
               {loadingMessage}
             </p>
@@ -947,7 +949,7 @@ function App() {
             {gameOverView === 'SUMMARY' && (
               <>
                 <div className="bg-black/20 p-8 text-center text-white shrink-0 border-b border-white/10">
-                   <h2 className="text-6xl font-bold header-font mb-2 text-shadow-lg tracking-wide text-[#ffcc00]">GAME SUMMARY</h2>
+                   <h2 className="text-6xl font-bold header-font mb-2 text-shadow-lg tracking-wide text-[#4A6DA7]">GAME SUMMARY</h2>
                 </div>
                 
                 <div className="flex-grow overflow-auto p-8">
@@ -992,11 +994,11 @@ function App() {
                    <div key={rec.questionId} className={`p-6 rounded-lg border bg-black/30 flex flex-col ${getGlowClass(rec.value)} relative`}>
                       <div className="mb-2 flex justify-between items-start">
                          <span className="text-xs font-bold uppercase opacity-70 bg-white/10 px-2 py-1 rounded">{rec.category}</span>
-                         <span className={`text-xl font-bold text-[#ffcc00]`}>${rec.value}</span>
+                         <span className={`text-xl font-bold text-[#4A6DA7]`}>${rec.value}</span>
                       </div>
                       <p className="text-sm opacity-90 mb-4 flex-grow">{rec.question}</p>
                       
-                      <div className="bg-white/5 p-3 rounded mb-3 border-l-2 border-[#ffcc00]">
+                      <div className="bg-white/5 p-3 rounded mb-3 border-l-2 border-[#4A6DA7]">
                          <p className="text-xs uppercase opacity-60">Answer</p>
                          <p className="font-bold">{rec.answer}</p>
                       </div>
@@ -1005,7 +1007,7 @@ function App() {
                         href={`https://www.jw.org/en/search/?q=${encodeURIComponent(rec.scripture)}`}
                         target="_blank" 
                         rel="noreferrer"
-                        className="text-center block bg-[#ffcc00]/20 hover:bg-[#ffcc00]/30 text-[#ffcc00] py-2 rounded text-sm font-bold border border-[#ffcc00]/50 transition-colors"
+                        className="text-center block bg-[#4A6DA7]/20 hover:bg-[#4A6DA7]/30 text-[#4A6DA7] py-2 rounded text-sm font-bold border border-[#4A6DA7]/50 transition-colors"
                       >
                          📖 {rec.scripture}
                       </a>
@@ -1015,7 +1017,7 @@ function App() {
             )}
 
             <div className="p-8 border-t border-white/10 flex justify-center bg-black/20">
-               <button onClick={restartGame} className="bg-[#ffcc00] hover:bg-yellow-400 text-black font-bold py-4 px-12 rounded text-xl shadow-lg transition-transform hover:scale-105 uppercase tracking-wider">New Game</button>
+               <button onClick={restartGame} className="bg-[#4A6DA7] hover:bg-blue-600 text-white font-bold py-4 px-12 rounded text-xl shadow-lg transition-transform hover:scale-105 uppercase tracking-wider">New Game</button>
             </div>
           </div>
         )}
