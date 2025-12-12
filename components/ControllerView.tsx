@@ -408,8 +408,8 @@ export const ControllerView: React.FC<ControllerViewProps> = ({ onBack }) => {
 
                     {/* THE 3D BUTTON */}
                     {/* Adjusted height and max-width for visibility on all devices */}
-                    <div className="relative w-full h-[40vh] max-h-[400px] min-h-[250px] mx-auto">
-                      <Canvas shadows dpr={[1, 2]} orthographic camera={{ position: [0, 10, 0], zoom: 40, near: 0.1, far: 100 }}>
+                    <div className="relative w-full h-[50vh] max-h-[500px] min-h-[300px] mx-auto">
+                      <Canvas shadows dpr={[1, 2]} orthographic camera={{ position: [0, 10, 0], zoom: 30, near: 0.1, far: 100 }}>
                          <ambientLight intensity={0.5} />
                          <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow />
                          <Environment preset="night" />
