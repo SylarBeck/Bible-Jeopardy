@@ -7,7 +7,9 @@ const SYSTEM_INSTRUCTION = `
 You are a creative and knowledgeable assistant designed to create a Jeopardy-style game board.
 The topic is strictly Bible-based trivia, using the New World Translation (NWT) of the Holy Scriptures and themes commonly found on JW.org.
 Avoid controversial or negative framing; keep the tone educational, spiritual, and fun.
-Do not use multiple choice. The 'question' should be the clue (e.g., "This man built the ark"), and the 'answer' should be the response (e.g., "Who is Noah?").
+Do not use multiple choice. 
+The 'question' field is the Jeopardy clue (e.g., "This man built the ark"). Keep clues clear, concise, and direct.
+The 'answer' field is the correct response (e.g., "Who is Noah?"). It MUST be between 1 and 5 words maximum.
 `;
 
 const DIFFICULTY_GUIDELINES = {
@@ -58,7 +60,7 @@ const setCachedGame = (key: string, data: GameBoardData) => {
 
 export const generateGame = async (difficulty: Difficulty, topic: Topic = 'GENERAL', round: 1 | 2 = 1): Promise<GameBoardData> => {
   // 1. Check Cache
-  const cacheKey = `jeopardy_gen_${difficulty}_${topic}_${round}_v2`;
+  const cacheKey = `jeopardy_gen_${difficulty}_${topic}_${round}_v3`;
   const cached = getCachedGame(cacheKey);
   if (cached) return cached;
 
@@ -74,6 +76,7 @@ export const generateGame = async (difficulty: Difficulty, topic: Topic = 'GENER
       ${topicInstruction}
       ${difficultyInstruction}
       Each category must have exactly 5 questions with these specific point values: ${values.join(', ')}.
+      CRITICAL: All answers must be 1 to 5 words maximum. Keep questions (clues) short, clear, and concise.
       For each question, provide a specific bible scripture reference (e.g. "Psalm 83:18") that supports the answer.
       Ensure categories in Round 2 are different from typical Round 1 categories if possible.`,
       config: {
@@ -95,7 +98,7 @@ export const generateGame = async (difficulty: Difficulty, topic: Topic = 'GENER
                       properties: {
                         value: { type: Type.NUMBER, description: "Point value" },
                         question: { type: Type.STRING, description: "The clue text" },
-                        answer: { type: Type.STRING, description: "The answer text" },
+                        answer: { type: Type.STRING, description: "The short answer text (1-5 words)" },
                         scripture: { type: Type.STRING, description: "Supporting scripture citation" }
                       },
                       required: ["value", "question", "answer", "scripture"]
@@ -147,7 +150,7 @@ export const generateFinalJeopardy = async (): Promise<FinalJeopardyQuestion> =>
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: `Generate a single, challenging Final Jeopardy question based on deep Bible knowledge. Include a scripture reference.`,
+      contents: `Generate a single, challenging Final Jeopardy question based on deep Bible knowledge. Include a scripture reference. The answer must be extremely concise (1-5 words).`,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
@@ -156,7 +159,7 @@ export const generateFinalJeopardy = async (): Promise<FinalJeopardyQuestion> =>
           properties: {
             category: { type: Type.STRING, description: "Category" },
             question: { type: Type.STRING, description: "Clue" },
-            answer: { type: Type.STRING, description: "Answer" },
+            answer: { type: Type.STRING, description: "Short Answer" },
             scripture: { type: Type.STRING, description: "Scripture" }
           },
           required: ["category", "question", "answer", "scripture"]
@@ -167,7 +170,7 @@ export const generateFinalJeopardy = async (): Promise<FinalJeopardyQuestion> =>
     if (!response.text) return {
        category: "Bible Prophecy",
        question: "This world power is depicted as the feet of iron and clay in Nebuchadnezzar's dream.",
-       answer: "What is the Anglo-American World Power?",
+       answer: "What is Anglo-America?",
        scripture: "Daniel 2:41-43"
     };
 
