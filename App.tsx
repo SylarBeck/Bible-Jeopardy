@@ -12,6 +12,7 @@ import { connectionService } from './services/connectionService';
 import { GameBoardData, GameState, Question, Difficulty, GameMode, Team, FinalJeopardyQuestion, AppMode, QuestionRecord, Avatar, Topic, FullGameData, VisualMode, NetworkMessage } from './types';
 import { playSound, setMusicState, getMusicState } from './services/soundService';
 import { MUSIC_DATA } from './services/musicData';
+import Balatro from './components/Balatro';
 
 // Icons
 const RefreshIcon = () => (
@@ -645,7 +646,8 @@ function App() {
 
   if (appMode === 'MENU') {
     return (
-      <div className="h-[100dvh] w-screen flex flex-col items-center justify-center bg-[#120a1f] text-white overflow-hidden relative">
+      <div className="h-[100dvh] w-screen flex flex-col items-center justify-center bg-black text-white overflow-hidden relative">
+        <Balatro isRotate={true} mouseInteraction={true} color1="#5e35b1" color2="#311b92" color3="#120a1f" spinSpeed={4} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(94,53,177,0.3)_0%,_#090510_80%)] pointer-events-none"></div>
 
         {/* Music Controls - Absolute Position in Corner */}
@@ -808,8 +810,9 @@ function App() {
 
   // HOST APP (TV DISPLAY)
   return (
-    <div className="h-screen w-screen font-sans flex flex-col overflow-hidden bg-[#120a1f] text-white transition-colors duration-300 relative">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,_rgba(94,53,177,0.15)_0%,_transparent_60%)] pointer-events-none"></div>
+    <div className="h-screen w-screen font-sans flex flex-col overflow-hidden bg-black text-white transition-colors duration-300 relative">
+      <Balatro isRotate={true} mouseInteraction={true} color1="#5e35b1" color2="#311b92" color3="#120a1f" spinSpeed={4} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(94,53,177,0.3)_0%,_#090510_80%)] pointer-events-none"></div>
 
       {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
 

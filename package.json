@@ -12,6 +12,7 @@
     "@google/genai": "*",
     "@react-three/drei": "^9.105.1",
     "@react-three/fiber": "^8.15.16",
+    "ogl": "^1.0.11",
     "peerjs": "^1.5.2",
     "qrcode": "^1.5.3",
     "react": "^18.2.0",
@@ -19,10 +20,10 @@
     "three": "^0.160.0"
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/three": "^0.160.0",
-    "@types/qrcode": "^1.5.5",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
