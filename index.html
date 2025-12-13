@@ -6,7 +6,7 @@
     <title>Bible Jeopardy</title>
     
     <!-- PWA Settings -->
-    <meta name="theme-color" content="#4A6DA7" />
+    <meta name="theme-color" content="#120a1f" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -14,8 +14,8 @@
     <link rel="manifest" href="manifest.json" />
     
     <!-- Favicon / Icon (Base64 SVG for standalone usage) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234A6DA7' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffffff' text-anchor='middle' font-weight='bold'>J</text></svg>" />
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234A6DA7' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffffff' text-anchor='middle' font-weight='bold'>J</text></svg>" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235e35b1' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffcc00' text-anchor='middle' font-weight='bold'>J</text></svg>" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%235e35b1' rx='20'/><text x='50' y='70' font-family='sans-serif' font-size='60' fill='%23ffcc00' text-anchor='middle' font-weight='bold'>J</text></svg>" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -23,14 +23,8 @@
       
       :root {
         /* Base Themes for Backgrounds */
-        --bg-main: #f7f7f7;
-        --text-main: #333333;
-        --modal-bg: rgba(0,0,0,0.6);
-      }
-
-      body.dark-mode {
-        --bg-main: #0f172a; /* Slate 900 */
-        --text-main: #e0e0e0;
+        --bg-main: #120a1f;
+        --text-main: #ffffff;
         --modal-bg: rgba(0,0,0,0.85);
       }
 
@@ -56,17 +50,17 @@
         font-family: 'Share Tech Mono', monospace;
       }
 
-      /* GLOBAL JEOPARDY TILE EFFECT - JW Blue Theme */
+      /* GLOBAL JEOPARDY TILE EFFECT - Dark Purple/Blue Theme */
       .jeopardy-texture {
-        background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 40%),
-                    linear-gradient(145deg, #4A6DA7 0%, #1e3a8a 100%);
-        border: 2px solid #60a5fa;
+        background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 40%),
+                    linear-gradient(145deg, #311b92 0%, #000000 100%);
+        border: 2px solid #5e35b1;
         box-shadow: 
-          inset 2px 2px 4px rgba(255,255,255,0.2), 
+          inset 2px 2px 4px rgba(255,255,255,0.1), 
           inset -2px -2px 8px rgba(0,0,0,0.5), 
-          0 4px 8px rgba(0,0,0,0.2);
+          0 4px 8px rgba(0,0,0,0.5);
         color: white;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
       }
 
       .jeopardy-texture.interactive {
@@ -75,23 +69,23 @@
       }
 
       .jeopardy-texture.interactive:hover {
-        background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.25) 0%, transparent 40%),
-                    linear-gradient(145deg, #5b8bd6 0%, #2563eb 100%);
+        background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.2) 0%, transparent 40%),
+                    linear-gradient(145deg, #4527a0 0%, #1a237e 100%);
         box-shadow: 
-          inset 2px 2px 4px rgba(255,255,255,0.3), 
+          inset 2px 2px 4px rgba(255,255,255,0.2), 
           inset -2px -2px 8px rgba(0,0,0,0.5), 
-          0 0 15px rgba(96, 165, 250, 0.6);
+          0 0 15px rgba(94, 53, 177, 0.5);
         transform: translateY(-2px) scale(1.02);
-        border-color: #93c5fd;
+        border-color: #7e57c2;
         z-index: 10;
       }
 
       /* Difficulty Glows */
-      .glow-200 { box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); border-color: #38bdf8; }
-      .glow-400 { box-shadow: 0 0 15px rgba(74, 222, 128, 0.6); border-color: #4ade80; }
-      .glow-600 { box-shadow: 0 0 20px rgba(250, 204, 21, 0.6); border-color: #facc15; }
-      .glow-800 { box-shadow: 0 0 20px rgba(251, 146, 60, 0.7); border-color: #fb923c; }
-      .glow-1000 { box-shadow: 0 0 25px rgba(248, 113, 113, 0.8); border-color: #f87171; }
+      .glow-200 { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); border-color: #38bdf8; }
+      .glow-400 { box-shadow: 0 0 15px rgba(74, 222, 128, 0.4); border-color: #4ade80; }
+      .glow-600 { box-shadow: 0 0 20px rgba(250, 204, 21, 0.4); border-color: #facc15; }
+      .glow-800 { box-shadow: 0 0 20px rgba(251, 146, 60, 0.5); border-color: #fb923c; }
+      .glow-1000 { box-shadow: 0 0 25px rgba(248, 113, 113, 0.6); border-color: #f87171; }
 
       /* Gold Text Utility */
       .text-gold {
