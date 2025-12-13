@@ -2,7 +2,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GameBoardData, Category, Question, Difficulty, FinalJeopardyQuestion, Topic } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: "AIzaSyDb059Jj01f_Vi_c4o6KXNIoR95ecj1QEM" });
 
 const SYSTEM_INSTRUCTION = `
 You are a creative and knowledgeable assistant designed to create a Jeopardy-style game board.
@@ -55,7 +55,7 @@ const setCachedGame = (key: string, data: GameBoardData) => {
     } catch (e) {
       // Clear old caches if quota exceeded
       Object.keys(localStorage).forEach(k => {
-        if(k.startsWith('jeopardy_gen_')) localStorage.removeItem(k);
+        if (k.startsWith('jeopardy_gen_')) localStorage.removeItem(k);
       });
       localStorage.setItem(key, JSON.stringify(data));
     }
@@ -136,7 +136,7 @@ export const generateGame = async (difficulty: Difficulty, topic: Topic = 'GENER
     }
 
     const data = JSON.parse(response.text);
-    
+
     const processedCategories: Category[] = data.categories.map((cat: any, catIndex: number) => ({
       id: `cat-${round}-${catIndex}`,
       name: cat.name,
@@ -151,7 +151,7 @@ export const generateGame = async (difficulty: Difficulty, topic: Topic = 'GENER
     }));
 
     const result = { categories: processedCategories, round };
-    
+
     // 2. Save to Cache
     setCachedGame(cacheKey, result);
 
@@ -188,10 +188,10 @@ export const generateFinalJeopardy = async (): Promise<FinalJeopardyQuestion> =>
     });
 
     if (!response.text) return {
-       category: "Bible Prophecy",
-       question: "This world power is depicted as the feet of iron and clay in Nebuchadnezzar's dream.",
-       answer: "What is Anglo-America?",
-       scripture: "Daniel 2:41-43"
+      category: "Bible Prophecy",
+      question: "This world power is depicted as the feet of iron and clay in Nebuchadnezzar's dream.",
+      answer: "What is Anglo-America?",
+      scripture: "Daniel 2:41-43"
     };
 
     return JSON.parse(response.text);

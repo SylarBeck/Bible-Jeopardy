@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Question, Team } from '../types';
 import { playSound } from '../services/soundService';
@@ -7,13 +6,14 @@ interface QuestionModalProps {
   question: Question;
   teams: Team[];
   activeBuzzer: string | null; // Team ID who buzzed
+  showAnswer?: boolean; // Optional prop for external control
   onClose: (result?: { winnerId: string | null, wrongIds: string[] }) => void;
   onUpdateScore: (teamId: string, type: 'add' | 'subtract') => void;
   onClearBuzzer: () => void;
 }
 
 export const QuestionModal: React.FC<QuestionModalProps> = ({ 
-  question, teams, activeBuzzer, onClose, onUpdateScore, onClearBuzzer 
+  question, teams, activeBuzzer, showAnswer: externalShowAnswer, onClose, onUpdateScore, onClearBuzzer 
 }) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
@@ -30,6 +30,15 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({
   useEffect(() => {
     requestAnimationFrame(() => setAnimateIn(true));
   }, []);
+
+  // Sync external showAnswer prop
+  useEffect(() => {
+    if (externalShowAnswer && !showAnswer) {
+      playSound('reveal');
+      setShowAnswer(true);
+      setTimerActive(false);
+    }
+  }, [externalShowAnswer, showAnswer]);
 
   // Timer Effect
   useEffect(() => {

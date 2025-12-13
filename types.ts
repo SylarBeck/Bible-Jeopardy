@@ -48,7 +48,7 @@ export enum GameState {
   LOADING = 'LOADING',
   LOBBY = 'LOBBY',
   LIBRARY = 'LIBRARY',
-  CREATOR = 'CREATOR', // New State
+  CREATOR = 'CREATOR', 
   PLAYING = 'PLAYING',
   ROUND_TRANSITION = 'ROUND_TRANSITION',
   FINAL_JEOPARDY = 'FINAL_JEOPARDY',
@@ -90,9 +90,10 @@ export interface QuestionRecord {
 }
 
 export interface NetworkMessage {
-  type: 'JOIN' | 'BUZZ' | 'GAME_STATE' | 'SCORE_UPDATE' | 'QUESTION_OPEN' | 'QUESTION_CLOSE' | 'GAME_OVER' | 'BUZZER_STATUS' | 'FJ_UPDATE';
+  type: 'JOIN' | 'BUZZ' | 'GAME_STATE' | 'SCORE_UPDATE' | 'QUESTION_OPEN' | 'QUESTION_CLOSE' | 'GAME_OVER' | 'BUZZER_STATUS' | 'FJ_UPDATE' | 'ADMIN_ACTION' | 'FJ_WAGER' | 'SCORE_EDIT';
   payload?: any;
   teamId?: string;
   teamName?: string;
   avatar?: Avatar;
+  action?: 'REVEAL' | 'SCORE_ADD' | 'SCORE_SUB' | 'CLOSE' | 'CLEAR_BUZZER' | 'FJ_REVEAL' | 'FJ_SCORING' | 'FJ_FINISH' | 'TOGGLE_MUSIC' | 'RESTART_GAME' | 'SCORE_EDIT';
 }

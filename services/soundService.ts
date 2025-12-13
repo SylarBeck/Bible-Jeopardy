@@ -2,43 +2,12 @@
 const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
 
 // --- BACKGROUND MUSIC MANAGER ---
-let musicElement: HTMLAudioElement | null = null;
+// Music is now handled via YouTube Iframe in App.tsx
 let isMusicEnabled = false;
 
-export const initMusic = () => {
-  if (musicElement) return;
-  
-  // Assumes a file named 'music.mp3' exists in the public root
-  musicElement = new Audio('/music.mp3');
-  musicElement.loop = true;
-  musicElement.volume = 0.15; // Keep it subtle so it doesn't overpower SFX/TTS
-
-  // Handle missing file gracefully
-  musicElement.addEventListener('error', (e) => {
-    console.warn("Background music file (/music.mp3) not found or failed to load.", e);
-    musicElement = null;
-    isMusicEnabled = false;
-  });
-};
-
 export const setMusicState = (play: boolean) => {
-  if (!musicElement && play) initMusic();
-  
   isMusicEnabled = play;
-  
-  if (musicElement) {
-    if (play) {
-      // Browser autoplay policy requires user interaction before this works
-      const playPromise = musicElement.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("Music playback prevented (waiting for interaction):", error);
-        });
-      }
-    } else {
-      musicElement.pause();
-    }
-  }
+  // No-op: Music logic moved to React component for YouTube embedding
 };
 
 export const getMusicState = () => isMusicEnabled;

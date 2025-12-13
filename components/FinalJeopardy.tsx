@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { FinalJeopardyQuestion, Team } from '../types';
 import { playSound } from '../services/soundService';
@@ -7,11 +8,12 @@ interface FinalJeopardyProps {
   data: FinalJeopardyQuestion;
   teams: Team[];
   onGameEnd: (updatedTeams: Team[]) => void;
+  externalWagers?: Record<string, number>;
 }
 
 type Phase = 'BETTING' | 'PLAYING' | 'REVEAL_ANSWER' | 'SCORING';
 
-export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGameEnd }) => {
+export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGameEnd, externalWagers }) => {
   const [phase, setPhase] = useState<Phase>('BETTING');
   const [wagers, setWagers] = useState<Record<string, number>>({});
   const [results, setResults] = useState<Record<string, 'CORRECT' | 'WRONG' | null>>({});
@@ -27,7 +29,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
     });
     setWagers(initialWagers);
     setResults(initialResults);
-    
+
     // Broadcast initial FJ state
     connectionService.sendMessage({
       type: 'FJ_UPDATE',
@@ -38,10 +40,20 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
     });
   }, [teams, data.category]);
 
+  // Sync external wagers (from Controllers)
+  useEffect(() => {
+    if (externalWagers) {
+      setWagers(prev => ({
+        ...prev,
+        ...externalWagers
+      }));
+    }
+  }, [externalWagers]);
+
   // Timer logic for PLAYING phase
   useEffect(() => {
     if (phase !== 'PLAYING') return;
-    
+
     if (timeLeft <= 0) {
       setPhase('REVEAL_ANSWER');
       return;
@@ -66,7 +78,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
     playSound('select');
     setTimeLeft(30);
     setPhase('PLAYING');
-    
+
     // Broadcast Question
     connectionService.sendMessage({
       type: 'FJ_UPDATE',
@@ -81,7 +93,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
   const revealAnswer = () => {
     playSound('reveal');
     setPhase('REVEAL_ANSWER');
-    
+
     // Broadcast Answer phase (Controller just shows wait/listen usually)
     connectionService.sendMessage({
       type: 'FJ_UPDATE',
@@ -100,7 +112,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
   const toggleResult = (teamId: string, result: 'CORRECT' | 'WRONG') => {
     if (result === 'CORRECT') playSound('correct');
     else playSound('wrong');
-    
+
     setResults(prev => ({
       ...prev,
       [teamId]: prev[teamId] === result ? null : result
@@ -125,7 +137,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
           newWrong += 1;
         }
       }
-      
+
       return {
         ...team,
         score: newScore,
@@ -142,7 +154,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
   return (
     <div className="w-full h-full flex items-center justify-center p-4">
       <div className="w-full max-w-6xl jeopardy-texture rounded-xl shadow-2xl border-2 border-[#7e57c2] overflow-hidden flex flex-col min-h-[60vh] animate-fade-in relative backdrop-blur-sm">
-        
+
         {/* Header */}
         <div className="bg-black/20 p-6 text-center border-b border-white/10 shadow-lg">
           <h2 className="text-3xl md:text-5xl font-bold header-font text-white tracking-widest uppercase text-shadow-md">
@@ -155,14 +167,19 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
 
         {/* Content Body */}
         <div className="flex-grow flex flex-col items-center justify-center p-8 text-center bg-black/10 overflow-y-auto">
-          
+
           {phase === 'BETTING' && (
             <div className="w-full max-w-5xl animate-fade-in">
               <h3 className="text-2xl text-white mb-8 header-font uppercase tracking-wide opacity-90">Place Your Wagers</h3>
-              
+
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 justify-center">
                 {activeTeams.map(team => (
-                  <div key={team.id} className="bg-black/30 p-6 rounded-lg border border-white/20 backdrop-blur-md shadow-xl hover:bg-black/40 transition-colors">
+                  <div key={team.id} className="bg-black/30 p-6 rounded-lg border border-white/20 backdrop-blur-md shadow-xl hover:bg-black/40 transition-colors relative overflow-hidden">
+                    {externalWagers && externalWagers[team.id] !== undefined && (
+                      <div className="absolute top-0 right-0 bg-green-600 text-[10px] font-bold px-2 py-1 uppercase tracking-wider">
+                        Ready
+                      </div>
+                    )}
                     <div className="text-[#ffcc00] font-bold text-2xl header-font mb-2">{team.name}</div>
                     <div className="text-white/70 text-sm mb-4 font-mono">Current: ${team.score.toLocaleString()}</div>
                     <div className="relative group">
@@ -187,7 +204,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
               )}
 
               <div className="mt-12">
-                <button 
+                <button
                   onClick={startRound}
                   className="bg-[#ffcc00] hover:bg-yellow-400 text-black font-bold py-4 px-16 rounded shadow-lg transform hover:scale-105 transition-all text-2xl uppercase header-font tracking-wider"
                 >
@@ -204,29 +221,29 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
               </p>
 
               {phase === 'PLAYING' && (
-                 <div className="w-full h-6 bg-black/50 rounded-full mb-8 overflow-hidden max-w-xl shadow-inner border border-white/10 relative">
-                   <div 
-                     className="h-full bg-yellow-400 transition-all duration-1000 linear"
-                     style={{ width: `${(timeLeft / 30) * 100}%` }}
-                   />
-                   <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-black/70">
-                     {timeLeft}s
-                   </span>
-                 </div>
+                <div className="w-full h-6 bg-black/50 rounded-full mb-8 overflow-hidden max-w-xl shadow-inner border border-white/10 relative">
+                  <div
+                    className="h-full bg-yellow-400 transition-all duration-1000 linear"
+                    style={{ width: `${(timeLeft / 30) * 100}%` }}
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-black/70">
+                    {timeLeft}s
+                  </span>
+                </div>
               )}
 
               {phase === 'REVEAL_ANSWER' ? (
                 <div className="animate-reveal w-full max-w-4xl p-10 rounded-lg border-l-8 border-yellow-500 shadow-2xl bg-gradient-to-r from-[#311b92]/90 to-[#4a148c]/90 backdrop-blur-md mb-8 border-y border-r border-white/10">
                   <p className="text-yellow-400 text-xl font-bold uppercase mb-4 tracking-wider header-font">Correct Answer</p>
-                  <p 
-                    className="text-white text-4xl md:text-6xl font-bold header-font drop-shadow-md animate-slide-up" 
+                  <p
+                    className="text-white text-4xl md:text-6xl font-bold header-font drop-shadow-md animate-slide-up"
                     style={{ animationDelay: '0.4s', opacity: 0, animationFillMode: 'forwards' }}
                   >
                     {data.answer}
                   </p>
                 </div>
               ) : (
-                <button 
+                <button
                   onClick={revealAnswer}
                   className="bg-[#ffcc00] hover:bg-yellow-400 text-black font-bold py-4 px-16 rounded shadow-lg transform hover:scale-105 transition-all text-2xl header-font"
                 >
@@ -235,7 +252,7 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
               )}
 
               {phase === 'REVEAL_ANSWER' && (
-                <button 
+                <button
                   onClick={startScoring}
                   className="mt-8 bg-blue-700 hover:bg-blue-600 text-white font-bold py-3 px-12 rounded text-xl shadow-lg transition-transform hover:scale-105 header-font"
                 >
@@ -248,45 +265,39 @@ export const FinalJeopardy: React.FC<FinalJeopardyProps> = ({ data, teams, onGam
           {phase === 'SCORING' && (
             <div className="w-full max-w-6xl animate-fade-in">
               <h3 className="text-2xl text-white mb-8 header-font uppercase tracking-wide">Determine Results</h3>
-              
+
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 justify-center mb-12">
                 {activeTeams.map(team => (
                   <div key={team.id} className="bg-black/30 p-6 rounded-lg border border-white/10 flex flex-col items-center shadow-lg backdrop-blur-sm">
                     <div className="text-xl font-bold text-white mb-2 header-font">{team.name}</div>
-                    <div className="text-[#ffcc00] font-bold text-2xl mb-4 font-mono">Wager: ${wagers[team.id]?.toLocaleString()}</div>
-                    
-                    <div className="flex gap-4 w-full">
-                       <button
-                         onClick={() => toggleResult(team.id, 'WRONG')}
-                         className={`flex-1 py-4 rounded font-bold border-none transition-all text-lg ${
-                           results[team.id] === 'WRONG' 
-                             ? 'bg-red-600 text-white shadow-lg transform scale-105' 
-                             : 'bg-white/10 text-white/50 hover:bg-red-900/50 hover:text-white'
-                         }`}
-                       >
-                         ✕
-                       </button>
-                       <button
-                         onClick={() => toggleResult(team.id, 'CORRECT')}
-                         className={`flex-1 py-4 rounded font-bold border-none transition-all text-lg ${
-                           results[team.id] === 'CORRECT' 
-                             ? 'bg-green-600 text-white shadow-lg transform scale-105' 
-                             : 'bg-white/10 text-white/50 hover:bg-green-900/50 hover:text-white'
-                         }`}
-                       >
-                         ✓
-                       </button>
+                    <div className="text-sm text-white/70 mb-4">Wager: ${wagers[team.id] ? wagers[team.id].toLocaleString() : 0}</div>
+
+                    <div className="flex gap-2 w-full">
+                      <button
+                        onClick={() => toggleResult(team.id, 'CORRECT')}
+                        className={`p-3 rounded flex-1 font-bold transition-all border outline-none ${results[team.id] === 'CORRECT' ? 'bg-green-600 border-green-400 text-white shadow-[0_0_15px_rgba(22,163,74,0.5)]' : 'bg-white/5 border-white/10 text-white/30 hover:bg-white/10 hover:text-white/70'}`}
+                      >
+                        ✓
+                      </button>
+                      <button
+                        onClick={() => toggleResult(team.id, 'WRONG')}
+                        className={`p-3 rounded flex-1 font-bold transition-all border outline-none ${results[team.id] === 'WRONG' ? 'bg-red-600 border-red-400 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)]' : 'bg-white/5 border-white/10 text-white/30 hover:bg-white/10 hover:text-white/70'}`}
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <button 
-                onClick={finishGame}
-                className="bg-[#ffcc00] hover:bg-yellow-400 text-black font-bold py-4 px-16 rounded text-2xl shadow-xl transition-transform hover:scale-105 header-font uppercase tracking-wider"
-              >
-                FINISH GAME
-              </button>
+              <div className="flex justify-center">
+                <button
+                  onClick={finishGame}
+                  className="bg-[#ffcc00] hover:bg-yellow-400 text-black font-bold py-4 px-12 rounded-full text-xl shadow-lg transition-transform hover:scale-105 header-font"
+                >
+                  FINALIZE GAME
+                </button>
+              </div>
             </div>
           )}
         </div>

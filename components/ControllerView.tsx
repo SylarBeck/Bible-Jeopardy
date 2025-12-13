@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { connectionService } from '../services/connectionService';
 import { playSound } from '../services/soundService';
@@ -8,6 +7,21 @@ import { ContactShadows, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Note: React Three Fiber types should be automatically picked up. 
+// If they are not, we declare them here to avoid compilation errors.
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      group: any;
+      mesh: any;
+      cylinderGeometry: any;
+      meshStandardMaterial: any;
+      sphereGeometry: any;
+      meshPhysicalMaterial: any;
+      ambientLight: any;
+      directionalLight: any;
+    }
+  }
+}
 
 interface ControllerViewProps {
   onBack: () => void;
