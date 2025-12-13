@@ -1,3 +1,4 @@
+
 export interface Question {
   id: string;
   value: number;
@@ -58,7 +59,8 @@ export enum GameState {
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 export type GameMode = 'AI' | 'PRESET';
 export type AppMode = 'MENU' | 'HOST' | 'CONTROLLER';
-export type Topic = 'GENERAL' | 'JESUS' | 'PROPHECY' | 'HISTORY' | 'PERSONALITIES' | 'FRUITAGE';
+export type Topic = 'GENERAL' | 'JESUS' | 'PROPHECY' | 'HISTORY' | 'PERSONALITIES' | 'FRUITAGE' | 'MEETING';
+export type VisualMode = 'CLASSIC' | 'NEON' | 'ANCIENT';
 
 export interface Avatar {
   id: string;

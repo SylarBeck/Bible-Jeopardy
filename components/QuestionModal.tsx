@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Question, Team } from '../types';
 import { playSound } from '../services/soundService';
@@ -35,12 +36,16 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({
     if (!timerActive || showAnswer || activeBuzzer) return;
 
     if (timeLeft <= 0) {
+      playSound('alarm');
       setTimerActive(false);
       return;
     }
 
     const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft((prev) => {
+         if (prev > 1) playSound('tick');
+         return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timer);

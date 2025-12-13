@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { connectionService } from '../services/connectionService';
 import { playSound } from '../services/soundService';
@@ -6,40 +7,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { ContactShadows, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Polyfill for React Three Fiber JSX types
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      group: any;
-      mesh: any;
-      cylinderGeometry: any;
-      meshStandardMaterial: any;
-      torusGeometry: any;
-      sphereGeometry: any;
-      ambientLight: any;
-      pointLight: any;
-      spotLight: any;
-      directionalLight: any;
-    }
-  }
-}
-
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements {
-      group: any;
-      mesh: any;
-      cylinderGeometry: any;
-      meshStandardMaterial: any;
-      torusGeometry: any;
-      sphereGeometry: any;
-      ambientLight: any;
-      pointLight: any;
-      spotLight: any;
-      directionalLight: any;
-    }
-  }
-}
+// Note: React Three Fiber types should be automatically picked up. 
 
 interface ControllerViewProps {
   onBack: () => void;
@@ -119,7 +87,7 @@ const BuzzerButton3D = ({
         >
           {/* Main Dome */}
           <sphereGeometry args={[2.5, 64, 32, 0, Math.PI * 2, 0, Math.PI * 0.4]} />
-          <meshStandardMaterial 
+          <meshPhysicalMaterial 
             color={locked ? "#333" : "#D90429"} 
             emissive={locked ? "#000" : "#EF233C"}
             emissiveIntensity={locked ? 0 : 0.3}
@@ -168,6 +136,7 @@ export const ControllerView: React.FC<ControllerViewProps> = ({ onBack }) => {
 
   const proceedToAvatar = () => {
     triggerHaptic(20);
+    playSound('select');
     if (!roomCode || !teamName) {
       setError("Please enter both Room Code and Team Name");
       return;
@@ -178,6 +147,7 @@ export const ControllerView: React.FC<ControllerViewProps> = ({ onBack }) => {
   
   const handleConnect = async (avatar: Avatar) => {
     triggerHaptic([10, 30, 10]);
+    playSound('select');
     try {
       setError('');
       setConnectionStatus('Initializing...');
@@ -187,6 +157,7 @@ export const ControllerView: React.FC<ControllerViewProps> = ({ onBack }) => {
         avatar,
         () => {
           setTimeout(() => {
+            playSound('join');
             setState('LOBBY');
             setConnectionStatus('');
           }, 800);
@@ -249,6 +220,7 @@ export const ControllerView: React.FC<ControllerViewProps> = ({ onBack }) => {
     
     setIsBuzzing(true);
     triggerHaptic(80); // Distinct heavy buzz for successful press
+    playSound('mobile_buzz'); // Distinct mobile sound
     
     setTimeout(() => setIsBuzzing(false), 150); 
     
