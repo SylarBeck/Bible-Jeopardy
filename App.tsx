@@ -191,7 +191,12 @@ function App() {
   // Auto-Detect Controller Mode URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('mode') === 'controller') {
+
+    // Check if PWA (Standalone)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true;
+
+    if (params.get('mode') === 'controller' || isStandalone) {
       setAppMode('CONTROLLER');
     }
   }, []);
@@ -678,6 +683,12 @@ function App() {
               autoPlay
               loop
               preload="auto"
+              onEnded={() => {
+                if (audioRef.current) {
+                  audioRef.current.currentTime = 0;
+                  audioRef.current.play().catch(() => { });
+                }
+              }}
               onPlay={() => {
                 if (audioRef.current) audioRef.current.volume = volume;
               }}
@@ -898,20 +909,6 @@ function App() {
                 </div>
               )}
 
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="audio/*"
-                onChange={handleMusicUpload}
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="p-2 rounded-full border border-white/20 transition-all bg-black/40 text-white/50 hover:bg-black/60 hover:text-white"
-                title="Upload Background Music"
-              >
-                <UploadIcon />
-              </button>
               <button
                 onClick={toggleMusic}
                 className={`p-2 rounded-full border border-white/20 transition-all ${isMusicOn ? 'bg-[#ffcc00] text-black shadow-lg shadow-yellow-500/20' : 'bg-black/40 text-white/30'}`}
