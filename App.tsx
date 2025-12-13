@@ -156,6 +156,7 @@ function App() {
   const [questionHistory, setQuestionHistory] = useState<QuestionRecord[]>([]);
   const [gameOverView, setGameOverView] = useState<'SUMMARY' | 'REVIEW'>('SUMMARY');
   const [qrUrl, setQrUrl] = useState('');
+  const [playerLimit, setPlayerLimit] = useState(4);
 
   // Wagers State (Map teamId -> amount)
   const [fjWagers, setFjWagers] = useState<Record<string, number>>({});
@@ -309,7 +310,7 @@ function App() {
     lockedOutTeamsRef.current = lockedOutTeams;
   }, [lockedOutTeams]);
 
-  // Handle Admin Commands from Host Console
+  // Handle Admin Commands from Host Console (or potential local use)
   const handleAdminAction = (msg: NetworkMessage) => {
     if (msg.action === 'REVEAL') {
       setShowAnswerOnTV(true);
@@ -362,11 +363,20 @@ function App() {
       const code = await connectionService.initializeHost(
         (name, id, avatar) => {
           // On Join
-          playSound('join');
           setTeams(prev => {
             // Check if re-joining
             const exists = prev.find(t => t.id === id);
             if (exists) return prev;
+
+            // Check Player Limit
+            if (prev.length >= playerLimit) {
+              // Limit reached, ignore. 
+              // Ideally we would send a rejection message back, but currently connectionService doesn't support specific rejection easily without more changes.
+              // We just won't add them to the team list.
+              return prev;
+            }
+
+            playSound('join');
             return [...prev, {
               id,
               name,
@@ -425,10 +435,12 @@ function App() {
   };
 
   const addTeam = () => {
+    if (teams.length >= playerLimit) return;
+
     if (newTeamName.trim()) {
       setTeams([...teams, { id: Date.now().toString(), name: newTeamName.trim(), avatar: DEFAULT_AVATAR, score: 0, correctAnswers: 0, wrongAnswers: 0 }]);
       setNewTeamName('');
-    } else if (teams.length < 4) {
+    } else {
       setTeams([...teams, { id: Date.now().toString(), name: `Team ${teams.length + 1}`, avatar: DEFAULT_AVATAR, score: 0, correctAnswers: 0, wrongAnswers: 0 }]);
     }
   };
@@ -965,166 +977,177 @@ function App() {
 
         {/* LOBBY */}
         {gameState === GameState.LOBBY && (
-          <div className="w-full max-w-7xl p-6 rounded-xl shadow-2xl animate-fade-in flex flex-col h-[85vh] jeopardy-texture">
-            <div className="flex justify-between items-start mb-6 border-b border-white/20 pb-4">
-              <div>
-                <h2 className="text-4xl font-bold header-font text-white text-shadow-md">LOBBY</h2>
-                <p className="opacity-70 text-base mt-1">Waiting for players to join...</p>
+          <div className="w-full max-w-7xl p-8 rounded-xl shadow-2xl animate-fade-in flex flex-col h-[80vh] jeopardy-texture overflow-hidden border-2 border-[#ffcc00]/20">
+            {/* Lobby Header */}
+            <div className="flex justify-between items-start mb-8 pb-6 border-b border-white/10 shrink-0">
+              <div className="flex items-center gap-6">
+                <div>
+                  <h2 className="text-5xl font-bold header-font text-[#ffcc00] text-shadow-md tracking-tighter">LOBBY</h2>
+                  <p className="opacity-60 text-lg mt-1 tracking-wide font-mono">WAITING FOR PLAYERS...</p>
+                </div>
+
+                {/* Player Limit Controls */}
+                <div className="bg-black/40 rounded-lg p-3 border border-white/10 ml-8 flex flex-col items-center">
+                  <span className="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">Max Players</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setPlayerLimit(Math.max(1, playerLimit - 1))}
+                      className="w-8 h-8 rounded bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition-colors"
+                    >
+                      -
+                    </button>
+                    <span className="font-mono text-2xl font-bold text-white min-w-[1.5em] text-center">{playerLimit}</span>
+                    <button
+                      onClick={() => setPlayerLimit(Math.min(12, playerLimit + 1))}
+                      className="w-8 h-8 rounded bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold transition-colors"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               </div>
+
               {roomCode ? (
                 <div className="flex gap-6 items-center">
-
                   {qrUrl && (
-                    <div className="p-2 rounded-lg shadow-lg hidden md:block animate-pop border-2 border-[#ffcc00] bg-[#120a1f]">
-                      <img src={qrUrl} alt="Join Game QR" className="w-24 h-24" />
+                    <div className="p-3 rounded-lg shadow-[0_0_20px_rgba(255,204,0,0.2)] hidden md:block animate-pop border-2 border-[#ffcc00] bg-black">
+                      <img src={qrUrl} alt="Join Game QR" className="w-24 h-24 rendering-pixelated" />
                     </div>
                   )}
-                  <div className="text-right bg-black/30 p-3 rounded-lg border border-white/10 shadow-inner">
-                    <div className="text-xs font-bold uppercase tracking-wider opacity-70">Room Code</div>
-                    <div className="text-5xl font-bold header-font text-[#ffcc00] tracking-widest text-shadow-sm lcd-font">{roomCode}</div>
+                  <div className="text-right bg-[#2a1a4a] p-4 rounded-xl border-2 border-[#ffcc00]/50 shadow-inner min-w-[200px]">
+                    <div className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1 text-[#ffcc00]">Room Code</div>
+                    <div className="text-6xl font-bold header-font text-white tracking-[0.2em] text-shadow-sm lcd-font leading-none">{roomCode}</div>
                   </div>
                 </div>
               ) : null}
             </div>
 
-            <div className="flex-grow overflow-auto mb-6 pr-2">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {teams.map(team => (
-                  <div key={team.id} className="p-4 rounded-lg bg-black/30 border border-white/10 shadow-[0_4px_0_rgba(255,255,255,0.1)] hover:translate-y-1 transition-transform flex flex-col items-center justify-between animate-pop backdrop-blur-sm h-40 relative overflow-hidden group">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-lg border-2 border-white/20 mb-2 ${team.avatar.color}`}>
-                      {team.avatar.icon}
-                    </div>
-                    <span className="font-bold text-lg text-white truncate w-full text-center">{team.name}</span>
-                    <div className="bg-white/10 px-3 py-1 rounded-full text-[10px] uppercase font-bold text-white/60 mt-1">{team.avatar.name}</div>
-                    <button onClick={() => removeTeam(team.id)} className="absolute top-2 right-2 text-white/20 hover:text-red-400 transition-colors"><TrashIcon /></button>
-                  </div>
-                ))}
-                {Array.from({ length: Math.max(0, 4 - teams.length) }).map((_, i) => (
-                  <div key={i} className="p-4 rounded-lg border-2 border-dashed border-white/10 flex items-center justify-center opacity-30 bg-black/10 h-40">
-                    <span className="font-bold uppercase tracking-widest text-xs">Empty Slot</span>
-                  </div>
-                ))}
+            {/* Players Grid */}
+            <div className="flex-grow overflow-y-auto p-8 pr-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {/* Render slots based on Player Limit */}
+                {Array.from({ length: playerLimit }).map((_, i) => {
+                  const team = teams[i];
+                  if (team) {
+                    // Occupied Slot
+                    return (
+                      <div key={team.id} className="group relative h-48 rounded-xl bg-gradient-to-br from-[#2a1a4a] to-[#120a1f] border-2 border-[#ffcc00]/50 shadow-lg flex flex-col items-center justify-center p-4 transition-all hover:scale-105 hover:border-[#ffcc00] hover:shadow-[0_0_20px_rgba(255,204,0,0.3)] animate-pop">
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => removeTeam(team.id)} className="p-2 bg-red-900/80 hover:bg-red-600 rounded-full text-white transition-colors"><TrashIcon /></button>
+                        </div>
+                        <div className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-xl border-4 border-white/10 mb-3 ${team.avatar.color} group-hover:scale-110 transition-transform`}>
+                          {team.avatar.icon}
+                        </div>
+                        <div className="text-center w-full">
+                          <div className="font-bold text-xl text-white truncate px-2">{team.name}</div>
+                          <div className="text-[10px] uppercase font-bold text-[#ffcc00]/80 tracking-widest mt-1 bg-black/40 inline-block px-2 py-0.5 rounded-full">{team.avatar.name}</div>
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    // Empty Slot
+                    return (
+                      <div key={`empty-${i}`} className="h-48 rounded-xl border-2 border-dashed border-white/5 bg-white/5 flex flex-col items-center justify-center p-4 opacity-40 hover:opacity-60 transition-opacity select-none">
+                        <span className="text-3xl mb-2 opacity-20">👤</span>
+                        <span className="font-bold uppercase tracking-widest text-xs text-center opacity-50">Waiting for<br />Player {i + 1}</span>
+                      </div>
+                    );
+                  }
+                })}
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 items-stretch p-6 bg-black/20 rounded-lg border border-white/5 shadow-inner">
-              {/* Manual Add & Visual Theme */}
-              <div className="w-full md:w-1/4 flex flex-col gap-4">
-                <div>
-                  <p className="text-xs uppercase font-bold opacity-60 mb-2">Add Manually</p>
-                  <div className="flex gap-2">
-                    <input
-                      value={newTeamName}
-                      onChange={e => setNewTeamName(e.target.value)}
-                      className="flex-grow p-3 rounded border border-white/20 bg-black/30 text-white placeholder-white/30 focus:border-[#ffcc00] outline-none text-sm"
-                      placeholder="Team Name"
-                    />
-                    <button onClick={addTeam} className="bg-green-700 hover:bg-green-600 text-white px-4 rounded font-bold shadow-md">+</button>
-                  </div>
-                </div>
+            {/* Bottom Controls */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 bg-black/40 rounded-xl border border-white/10 shrink-0">
+              {/* Visual Settings */}
+              <div className="flex flex-col justify-center gap-2">
+                <label className="text-[10px] uppercase font-bold text-white/40 tracking-widest">Visual Theme</label>
+                <select
+                  value={visualMode}
+                  onChange={(e) => setVisualMode(e.target.value as VisualMode)}
+                  className="w-full p-3 bg-[#120a1f] border border-white/20 rounded-lg text-sm font-bold uppercase text-white outline-none focus:border-[#ffcc00] transition-colors appearance-none cursor-pointer hover:bg-white/5 text-center"
+                >
+                  <option value="CLASSIC">Classic Blue</option>
+                  <option value="NEON">Neon Cyber</option>
+                  <option value="ANCIENT">Ancient Scroll</option>
+                </select>
+              </div>
 
-                <div>
-                  <p className="text-xs uppercase font-bold opacity-60 mb-2">Visual Theme</p>
-                  <select
-                    value={visualMode}
-                    onChange={(e) => setVisualMode(e.target.value as VisualMode)}
-                    className="w-full p-2 bg-black/30 border border-white/20 rounded text-sm font-bold uppercase"
+              {/* Game Mode Selector */}
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] uppercase font-bold text-white/40 tracking-widest text-center">Game Mode</label>
+                <div className="flex rounded-lg overflow-hidden border border-white/10">
+                  <button
+                    onClick={() => setGameMode('AI')}
+                    className={`flex-1 py-3 text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${gameMode === 'AI' ? 'bg-[#ffcc00] text-black shadow-inner' : 'bg-black/20 text-white/40 hover:text-white hover:bg-white/5'}`}
                   >
-                    <option value="CLASSIC">Classic Blue</option>
-                    <option value="NEON">Neon Cyber</option>
-                    <option value="ANCIENT">Ancient Scroll</option>
-                  </select>
+                    <span className="text-lg"><RobotIcon /></span> AI Generator
+                  </button>
+                  <button
+                    onClick={() => setGameMode('PRESET')}
+                    className={`flex-1 py-3 text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${gameMode === 'PRESET' ? 'bg-[#2a1a4a] text-white border-l border-white/10 shadow-inner' : 'bg-black/20 text-white/40 hover:text-white hover:bg-white/5'}`}
+                  >
+                    <span className="text-lg"><LibraryIcon /></span> Library
+                  </button>
                 </div>
               </div>
 
-              {/* GAME CONFIGURATION */}
-              <div className="w-full md:w-3/4 flex flex-col gap-3">
-                <div className="flex justify-between items-center border-b border-white/10 pb-2 mb-2">
-                  <p className="text-xs uppercase font-bold opacity-60">Game Configuration</p>
-
-                  {/* Mode Toggle */}
-                  <div className="flex bg-black/40 rounded-lg p-1 border border-white/10">
-                    <button
-                      onClick={() => setGameMode('AI')}
-                      className={`px-4 py-1 rounded-md text-xs font-bold uppercase transition-all flex items-center gap-2 ${gameMode === 'AI' ? 'bg-blue-600 text-white shadow-md' : 'text-white/40 hover:text-white'}`}
-                    >
-                      <RobotIcon /> AI Mode
-                    </button>
-                    <button
-                      onClick={() => setGameMode('PRESET')}
-                      className={`px-4 py-1 rounded-md text-xs font-bold uppercase transition-all flex items-center gap-2 ${gameMode === 'PRESET' ? 'bg-[#ffcc00] text-black shadow-md' : 'text-white/40 hover:text-white'}`}
-                    >
-                      <LibraryIcon /> Library
-                    </button>
-                  </div>
-                </div>
-
+              {/* Start / Generate Button Area */}
+              <div className="flex flex-col justify-end">
                 {gameMode === 'AI' ? (
-                  <div className="flex gap-4 items-start animate-fade-in h-full">
-                    <div className="flex-grow grid grid-cols-2 md:grid-cols-3 gap-2">
-                      {TOPICS.map(t => (
-                        <button
-                          key={t.id}
-                          onClick={() => setTopic(t.id)}
-                          className={`p-2 rounded border text-left flex items-center gap-2 transition-all ${topic === t.id ? 'bg-blue-900 border-blue-400 shadow-md transform scale-105' : 'bg-black/20 border-white/5 hover:bg-white/5'}`}
-                        >
-                          <div className="w-8 h-8 flex items-center justify-center bg-white/10 rounded-full">{t.icon}</div>
-                          <span className="text-xs font-bold uppercase">{t.label}</span>
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="flex flex-col gap-2 w-48 shrink-0 h-full">
-                      <label className="text-[10px] uppercase font-bold opacity-50">Difficulty</label>
-                      <div className="flex gap-1 mb-2">
-                        {(['EASY', 'MEDIUM', 'HARD'] as Difficulty[]).map(diff => (
-                          <button
-                            key={diff}
-                            onClick={() => setDifficulty(diff)}
-                            className={`flex-1 py-1 text-[10px] font-bold border rounded ${difficulty === diff ? 'bg-white text-black border-white' : 'bg-transparent border-white/20 text-white/50'}`}
-                          >
-                            {diff}
-                          </button>
-                        ))}
-                      </div>
-
-                      {topic === 'MEETING' && (
-                        <div className="animate-fade-in flex flex-col gap-1 mb-2">
-                          <label className="text-[10px] uppercase font-bold text-[#ffcc00]">Article / Theme Title</label>
-                          <input
-                            value={customThemeInput}
-                            onChange={(e) => setCustomThemeInput(e.target.value)}
-                            placeholder="e.g. Watchtower Article 40"
-                            className="w-full p-2 text-xs bg-black/40 border border-[#ffcc00] rounded text-white"
-                          />
-                        </div>
-                      )}
-
-                      <button
-                        onClick={startGame}
-                        disabled={teams.length < 1 || (topic === 'MEETING' && !customThemeInput.trim())}
-                        className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold rounded-lg shadow-lg text-lg uppercase flex-grow transition-all"
+                  <div className="flex gap-2">
+                    <div className="flex-grow">
+                      {/* Compact Topics for space */}
+                      <select
+                        value={topic}
+                        onChange={(e) => setTopic(e.target.value as Topic)}
+                        className="w-full h-full p-2 bg-[#120a1f] border border-white/20 rounded-lg text-xs font-bold uppercase text-white outline-none focus:border-[#ffcc00]"
                       >
-                        Generate
-                      </button>
+                        {TOPICS.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+                      </select>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between h-full animate-fade-in bg-black/20 p-4 rounded border border-[#ffcc00]/20">
-                    <div>
-                      <h4 className="font-bold text-[#ffcc00] text-lg mb-1">Select a Premade Game</h4>
-                      <p className="text-sm text-white/60">Choose from curated packs or your own creations.</p>
-                      <span className="text-xs text-green-400 font-bold uppercase tracking-wider mt-1 block">Offline Ready</span>
+                    <div className="w-24">
+                      <select
+                        value={difficulty}
+                        onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+                        className="w-full h-full p-2 bg-[#120a1f] border border-white/20 rounded-lg text-xs font-bold uppercase text-white outline-none focus:border-[#ffcc00]"
+                      >
+                        <option value="EASY">Easy</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="HARD">Hard</option>
+                      </select>
                     </div>
                     <button
                       onClick={startGame}
                       disabled={teams.length < 1}
-                      className="px-8 py-4 bg-[#ffcc00] hover:bg-yellow-400 disabled:opacity-50 text-black font-bold rounded-lg shadow-lg text-lg uppercase flex items-center gap-2"
+                      className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95"
                     >
-                      <LibraryIcon /> Open Library
+                      GO
                     </button>
                   </div>
+                ) : (
+                  <button
+                    onClick={startGame}
+                    disabled={teams.length < 1}
+                    className="w-full py-3 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-lg uppercase tracking-wider transition-transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                  >
+                    Open Library &rarr;
+                  </button>
                 )}
+              </div>
+            </div>
+
+            {/* Quick Manual Add (Hidden by default or smaller) */}
+            <div className="mt-4 flex justify-center opacity-30 hover:opacity-100 transition-opacity">
+              <div className="flex gap-2 items-center text-xs">
+                <span className="uppercase font-bold">Manual Add:</span>
+                <input
+                  value={newTeamName}
+                  onChange={e => setNewTeamName(e.target.value)}
+                  className="p-1 rounded bg-white/10 border border-white/20 text-white w-32"
+                  placeholder="Name"
+                />
+                <button onClick={addTeam} className="bg-white/20 px-2 py-1 rounded hover:bg-white/30">+</button>
               </div>
             </div>
           </div>
